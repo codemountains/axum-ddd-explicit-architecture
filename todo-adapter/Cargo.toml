@@ -1,0 +1,16 @@
+[package]
+name = "todo-adapter"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+todo-kernel = { path = "../todo-kernel" }
+anyhow = "1.0.58"
+async-trait = "0.1.56"
+chrono = "0.4.22"
+dotenv = "0.15.0"
+serde = { version = "1.0.140", features = ["derive"] }
+sqlx = { version = "0.6.2", features = ["runtime-tokio-rustls", "postgres", "chrono"] }
+tokio = { version = "1.20.0", features = ["full"] }

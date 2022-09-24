@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "todo-adapter",
+    "todo-app",
+    "todo-driver",
+    "todo-kernel",
+]
