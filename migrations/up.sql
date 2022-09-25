@@ -1,3 +1,4 @@
+-- Setup a table
 create table todos (
     id varchar(26) not null primary key,
     title varchar(255) not null,
@@ -7,6 +8,11 @@ create table todos (
     updated_at timestamp with time zone not null default current_timestamp,
     completed_at timestamp with time zone
 );
+
+-- Insert sample data
+insert into todos (id, title, description) values ('01GDT91DZ0FDZ7YJ426PB189V1', 'todo 1', 'init test data.');
+insert into todos (id, title, description) values ('01GDT91MB0SGG49T974GX2A5G9', 'todo 2', '');
+update todos set is_completed = true, updated_at = current_timestamp, completed_at = current_timestamp where id = '01GDT91DZ0FDZ7YJ426PB189V1';
 
 -- Next step
 -- create table users (

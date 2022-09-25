@@ -13,12 +13,6 @@ pub struct TodoView {
 
 impl From<Todo> for TodoView {
     fn from(t: Todo) -> Self {
-        let completed_at = if let Some(c) = t.completed_at {
-            Some(c.into())
-        } else {
-            None
-        };
-
         Self {
             id: t.id.value.to_string(),
             title: t.title,
@@ -26,7 +20,7 @@ impl From<Todo> for TodoView {
             is_completed: t.is_completed,
             created_at: t.created_at.into(),
             updated_at: t.updated_at.into(),
-            completed_at,
+            completed_at: t.completed_at.map(|c| c.into()),
         }
     }
 }

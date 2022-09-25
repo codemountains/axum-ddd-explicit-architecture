@@ -15,12 +15,6 @@ pub struct JsonTodo {
 
 impl From<TodoView> for JsonTodo {
     fn from(tv: TodoView) -> Self {
-        let completed_at = if let Some(c) = tv.completed_at {
-            Some(c.to_string())
-        } else {
-            None
-        };
-
         Self {
             id: tv.id,
             title: tv.title,
@@ -28,7 +22,19 @@ impl From<TodoView> for JsonTodo {
             is_completed: tv.is_completed,
             created_at: tv.created_at.to_string(),
             updated_at: tv.updated_at.to_string(),
-            completed_at,
+            completed_at: tv.completed_at.map(|c| c.to_string()),
         }
+    }
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct JsonTodoList {
+    pub todos: Vec<JsonTodo>,
+}
+
+impl JsonTodoList {
+    pub fn new(todos: Vec<JsonTodo>) -> Self {
+        Self { todos }
     }
 }

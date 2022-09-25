@@ -24,4 +24,16 @@ impl<R: RepositoriesModuleExt> TodoUseCase<R> {
             None => Ok(None),
         }
     }
+
+    pub async fn find_todo(&self) -> anyhow::Result<Option<Vec<TodoView>>> {
+        let resp = self.repositories.todo_repository().find().await?;
+
+        match resp {
+            Some(todos) => {
+                let tv_list = todos.into_iter().map(|t| t.into()).collect();
+                Ok(Some(tv_list))
+            }
+            None => Ok(None),
+        }
+    }
 }
