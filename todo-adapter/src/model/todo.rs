@@ -7,8 +7,10 @@ pub struct StoredTodo {
     pub id: String,
     pub title: String,
     pub description: String,
+    pub is_completed: bool,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
+    pub completed_at: Option<DateTime<Utc>>,
 }
 
 impl TryFrom<StoredTodo> for Todo {
@@ -19,8 +21,10 @@ impl TryFrom<StoredTodo> for Todo {
             id: t.id.try_into()?,
             title: t.title,
             description: t.description,
+            is_completed: t.is_completed,
             created_at: t.created_at,
             updated_at: t.updated_at,
+            completed_at: t.completed_at,
         })
     }
 }

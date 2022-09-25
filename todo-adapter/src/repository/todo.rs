@@ -17,7 +17,6 @@ impl TodoRepository for DatabaseRepositoryImpl<Todo> {
             .fetch_one(&*pool)
             .await
             .ok();
-        println!("{:?}", stored_todo);
 
         match stored_todo {
             Some(st) => Ok(Some(st.try_into()?)),
