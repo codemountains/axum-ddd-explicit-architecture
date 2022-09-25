@@ -10,3 +10,19 @@ pub struct Todo {
     pub updated_at: DateTime<Utc>,
     pub completed_at: Option<DateTime<Utc>>,
 }
+
+pub struct NewTodo {
+    pub id: Id<Todo>,
+    pub title: String,
+    pub description: String,
+}
+
+impl NewTodo {
+    pub fn new(id: Id<Todo>, title: String, description: String) -> Self {
+        Self {
+            id,
+            title,
+            description,
+        }
+    }
+}

@@ -1,4 +1,5 @@
-use crate::model::todo::{JsonTodo, JsonTodoList};
+use crate::context::validate::ValidatedRequest;
+use crate::model::todo::{JsonCreateTodo, JsonTodo, JsonTodoList};
 use crate::module::{Modules, ModulesExt};
 use axum::extract::Path;
 use axum::http::StatusCode;
@@ -53,4 +54,21 @@ pub async fn find_todo(
             Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }
+}
+
+pub async fn create_todo(
+    ValidatedRequest(source): ValidatedRequest<JsonCreateTodo>,
+    Extension(modules): Extension<Arc<Modules>>,
+) -> Result<impl IntoResponse, StatusCode> {
+    let resp = modules.todo_use_case().register_todo(source.into()).await;
+
+    resp.map(|tv| {
+        info!("Created todo: {}", tv.id);
+        let json: JsonTodo = tv.into();
+        (StatusCode::CREATED, Json(json))
+    })
+    .map_err(|err| {
+        error!("{:?}", err);
+        StatusCode::INTERNAL_SERVER_ERROR
+    })
 }
