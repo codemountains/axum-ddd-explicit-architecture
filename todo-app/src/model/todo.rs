@@ -1,5 +1,6 @@
 use crate::model::DateTimeRfc3339;
-use todo_kernel::model::todo::Todo;
+use todo_kernel::model::todo::{NewTodo, Todo};
+use todo_kernel::model::Id;
 
 pub struct TodoView {
     pub id: String,
@@ -22,5 +23,24 @@ impl From<Todo> for TodoView {
             updated_at: t.updated_at.into(),
             completed_at: t.completed_at.map(|c| c.into()),
         }
+    }
+}
+
+pub struct CreateTodo {
+    pub title: String,
+    pub description: String,
+}
+
+impl CreateTodo {
+    pub fn new(title: String, description: String) -> Self {
+        Self { title, description }
+    }
+}
+
+impl TryFrom<CreateTodo> for NewTodo {
+    type Error = anyhow::Error;
+
+    fn try_from(ct: CreateTodo) -> Result<Self, Self::Error> {
+        Ok(NewTodo::new(Id::gen(), ct.title, ct.description))
     }
 }

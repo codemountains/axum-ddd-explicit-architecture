@@ -1,8 +1,8 @@
-use crate::model::todo::StoredTodo;
+use crate::model::todo::{InsertTodo, StoredTodo};
 use crate::repository::DatabaseRepositoryImpl;
 use async_trait::async_trait;
-use sqlx::query_as;
-use todo_kernel::model::todo::Todo;
+use sqlx::{query, query_as};
+use todo_kernel::model::todo::{NewTodo, Todo};
 use todo_kernel::model::Id;
 use todo_kernel::repository::todo::TodoRepository;
 
@@ -36,5 +36,24 @@ impl TodoRepository for DatabaseRepositoryImpl<Todo> {
             }
             None => Ok(None),
         }
+    }
+
+    async fn insert(&self, source: NewTodo) -> anyhow::Result<Todo> {
+        let pool = self.db.0.clone();
+        let todo: InsertTodo = source.try_into()?;
+        let id = todo.id.clone();
+
+        let _ = query("insert into todos (id, title, description) values ($1, $2, $3)")
+            .bind(todo.id)
+            .bind(todo.title)
+            .bind(todo.description)
+            .execute(&*pool)
+            .await?;
+
+        let stored_todo = query_as::<_, StoredTodo>("select * from todos where id = $1")
+            .bind(id)
+            .fetch_one(&*pool)
+            .await?;
+        Ok(stored_todo.try_into()?)
     }
 }

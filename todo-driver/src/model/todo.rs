@@ -1,5 +1,6 @@
-use serde::Serialize;
-use todo_app::model::todo::TodoView;
+use serde::{Serialize, Deserialize};
+use todo_app::model::todo::{CreateTodo, TodoView};
+use validator::Validate;
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -36,5 +37,26 @@ pub struct JsonTodoList {
 impl JsonTodoList {
     pub fn new(todos: Vec<JsonTodo>) -> Self {
         Self { todos }
+    }
+}
+
+#[derive(Deserialize, Debug, Validate)]
+#[serde(rename_all = "camelCase")]
+pub struct JsonCreateTodo {
+    #[validate(
+        length(min = 1, message = "`title` is empty."),
+        required(message = "`title` is null.")
+    )]
+    pub title: Option<String>,
+    #[validate(required(message = "`description` is null."))]
+    pub description: Option<String>,
+}
+
+impl From<JsonCreateTodo> for CreateTodo {
+    fn from(jc: JsonCreateTodo) -> Self {
+        CreateTodo {
+            title: jc.title.unwrap(),
+            description: jc.description.unwrap(),
+        }
     }
 }

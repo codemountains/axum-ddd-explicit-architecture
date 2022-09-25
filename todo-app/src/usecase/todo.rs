@@ -1,4 +1,4 @@
-use crate::model::todo::TodoView;
+use crate::model::todo::{CreateTodo, TodoView};
 use std::sync::Arc;
 use todo_adapter::modules::RepositoriesModuleExt;
 use todo_kernel::repository::todo::TodoRepository;
@@ -35,5 +35,15 @@ impl<R: RepositoriesModuleExt> TodoUseCase<R> {
             }
             None => Ok(None),
         }
+    }
+
+    pub async fn register_todo(&self, source: CreateTodo) -> anyhow::Result<TodoView> {
+        let todo_view = self
+            .repositories
+            .todo_repository()
+            .insert(source.try_into()?)
+            .await?;
+
+        Ok(todo_view.into())
     }
 }
