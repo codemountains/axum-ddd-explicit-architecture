@@ -1,5 +1,8 @@
-use serde::{Serialize, Deserialize};
-use todo_app::model::todo::{CreateTodo, TodoView};
+pub mod status;
+
+use crate::model::todo::status::JsonTodoStatus;
+use serde::{Deserialize, Serialize};
+use todo_app::model::todo::{CreateTodo, TodoView, UpdateTodoView};
 use validator::Validate;
 
 #[derive(Debug, Serialize)]
@@ -8,10 +11,9 @@ pub struct JsonTodo {
     pub id: String,
     pub title: String,
     pub description: String,
-    pub is_completed: bool,
+    pub status: JsonTodoStatus,
     pub created_at: String,
     pub updated_at: String,
-    pub completed_at: Option<String>,
 }
 
 impl From<TodoView> for JsonTodo {
@@ -20,10 +22,9 @@ impl From<TodoView> for JsonTodo {
             id: tv.id,
             title: tv.title,
             description: tv.description,
-            is_completed: tv.is_completed,
+            status: tv.status.into(),
             created_at: tv.created_at.to_string(),
             updated_at: tv.updated_at.to_string(),
-            completed_at: tv.completed_at.map(|c| c.to_string()),
         }
     }
 }
@@ -58,5 +59,42 @@ impl From<JsonCreateTodo> for CreateTodo {
             title: jc.title.unwrap(),
             description: jc.description.unwrap(),
         }
+    }
+}
+
+#[derive(Deserialize, Debug, Validate)]
+#[serde(rename_all = "camelCase")]
+pub struct JsonUpdateTodo {
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub status_code: Option<String>,
+}
+
+impl JsonUpdateTodo {
+    pub fn validate(self, id: String) -> Result<UpdateTodoView, Vec<String>> {
+        let mut errors: Vec<String> = vec![];
+
+        if let Some(title) = &self.title {
+            if title.is_empty() {
+                errors.push("`title` is empty.".to_string());
+            }
+        }
+
+        if let Some(status_code) = &self.status_code {
+            if status_code.is_empty() {
+                errors.push("`statusCode` is empty.".to_string());
+            }
+        }
+
+        if !errors.is_empty() {
+            return Err(errors);
+        }
+
+        Ok(UpdateTodoView::new(
+            id,
+            self.title,
+            self.description,
+            self.status_code,
+        ))
     }
 }

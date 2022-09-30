@@ -26,8 +26,8 @@ impl IntoResponse for AppError {
 
                 let mut messages: Vec<String> = Vec::new();
                 let errors = validation_errors.field_errors();
-                for (_, v) in errors.iter() {
-                    for validation_error in v.to_owned() {
+                for (_, v) in errors.into_iter() {
+                    for validation_error in v {
                         if let Some(msg) = validation_error.clone().message {
                             messages.push(msg.to_string());
                         }
@@ -55,6 +55,6 @@ impl IntoResponse for AppError {
                 )
             }
         }
-            .into_response()
+        .into_response()
     }
 }

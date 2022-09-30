@@ -1,2 +1,5 @@
+drop table todo_statuses;
 drop table todos;
-drop table users;
+
+-- Next step
+-- drop table users;

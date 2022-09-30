@@ -1,5 +1,6 @@
+use crate::context::response_helper::JsonErrorResponse;
 use crate::context::validate::ValidatedRequest;
-use crate::model::todo::{JsonCreateTodo, JsonTodo, JsonTodoList};
+use crate::model::todo::{JsonCreateTodo, JsonTodo, JsonTodoList, JsonUpdateTodo};
 use crate::module::{Modules, ModulesExt};
 use axum::extract::Path;
 use axum::http::StatusCode;
@@ -71,4 +72,43 @@ pub async fn create_todo(
         error!("{:?}", err);
         StatusCode::INTERNAL_SERVER_ERROR
     })
+}
+
+pub async fn update_todo(
+    Path(id): Path<String>,
+    ValidatedRequest(source): ValidatedRequest<JsonUpdateTodo>,
+    Extension(modules): Extension<Arc<Modules>>,
+) -> Result<impl IntoResponse, impl IntoResponse> {
+    match source.validate(id) {
+        Ok(todo) => {
+            let resp = modules.todo_use_case().update_todo(todo).await;
+
+            resp.map(|tv| {
+                info!("Updated todo: {}", tv.id);
+                let json: JsonTodo = tv.into();
+                (StatusCode::OK, Json(json))
+            })
+            .map_err(|err| {
+                error!("{:?}", err);
+
+                if err.to_string() == *"`statusCode` is invalid." {
+                    let json = JsonErrorResponse::new(
+                        "invalid_request".to_string(),
+                        vec![err.to_string()],
+                    );
+                    (StatusCode::BAD_REQUEST, Json(json))
+                } else {
+                    let json = JsonErrorResponse::new(
+                        "server_error".to_string(),
+                        vec!["INTERNAL SERVER ERROR".to_string()],
+                    );
+                    (StatusCode::INTERNAL_SERVER_ERROR, Json(json))
+                }
+            })
+        }
+        Err(errors) => {
+            let json = JsonErrorResponse::new("invalid_request".to_string(), errors);
+            Err((StatusCode::BAD_REQUEST, Json(json)))
+        }
+    }
 }

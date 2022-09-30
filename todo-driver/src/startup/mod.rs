@@ -1,7 +1,7 @@
 use crate::module::Modules;
 use crate::routes::health_check::{hc, hc_postgres};
-use crate::routes::todo::{create_todo, find_todo, get_todo};
-use axum::routing::{get, post};
+use crate::routes::todo::{create_todo, find_todo, get_todo, update_todo};
+use axum::routing::get;
 use axum::{Extension, Router};
 use dotenv::dotenv;
 use std::env;
@@ -14,9 +14,8 @@ pub async fn startup(modules: Arc<Modules>) {
         .route("/postgres", get(hc_postgres));
 
     let todo_router = Router::new()
-        .route("/", get(find_todo))
-        .route("/", post(create_todo))
-        .route("/:id", get(get_todo));
+        .route("/", get(find_todo).post(create_todo))
+        .route("/:id", get(get_todo).patch(update_todo));
 
     let app = Router::new()
         .nest("/v1/hc", hc_router)
