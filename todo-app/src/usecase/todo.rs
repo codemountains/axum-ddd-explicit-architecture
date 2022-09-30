@@ -1,4 +1,4 @@
-use crate::model::todo::{CreateTodo, TodoView, UpdateTodoView};
+use crate::model::todo::{CreateTodo, SearchTodoCondition, TodoView, UpdateTodoView};
 use anyhow::anyhow;
 use std::sync::Arc;
 use todo_adapter::modules::RepositoriesModuleExt;
@@ -28,8 +28,27 @@ impl<R: RepositoriesModuleExt> TodoUseCase<R> {
         }
     }
 
-    pub async fn find_todo(&self) -> anyhow::Result<Option<Vec<TodoView>>> {
-        let resp = self.repositories.todo_repository().find().await?;
+    pub async fn find_todo(
+        &self,
+        condition: SearchTodoCondition,
+    ) -> anyhow::Result<Option<Vec<TodoView>>> {
+        let status = if let Some(code) = &condition.status_code {
+            match self
+                .repositories
+                .todo_status_repository()
+                .get_by_code(code.as_str())
+                .await
+            {
+                Ok(status) => Some(status),
+                Err(err) => {
+                    return Err(anyhow!(err));
+                }
+            }
+        } else {
+            None
+        };
+
+        let resp = self.repositories.todo_repository().find(status).await?;
 
         match resp {
             Some(todos) => {

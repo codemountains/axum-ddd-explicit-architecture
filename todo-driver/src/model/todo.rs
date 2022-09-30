@@ -2,7 +2,7 @@ pub mod status;
 
 use crate::model::todo::status::JsonTodoStatus;
 use serde::{Deserialize, Serialize};
-use todo_app::model::todo::{CreateTodo, TodoView, UpdateTodoView};
+use todo_app::model::todo::{CreateTodo, SearchTodoCondition, TodoView, UpdateTodoView};
 use validator::Validate;
 
 #[derive(Debug, Serialize)]
@@ -96,5 +96,19 @@ impl JsonUpdateTodo {
             self.description,
             self.status_code,
         ))
+    }
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TodoQuery {
+    pub status: Option<String>,
+}
+
+impl From<TodoQuery> for SearchTodoCondition {
+    fn from(tq: TodoQuery) -> Self {
+        Self {
+            status_code: tq.status,
+        }
     }
 }
