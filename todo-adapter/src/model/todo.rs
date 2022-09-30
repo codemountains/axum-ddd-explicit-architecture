@@ -1,16 +1,20 @@
+pub mod status;
+
 use chrono::{DateTime, Utc};
 use sqlx::FromRow;
-use todo_kernel::model::todo::{NewTodo, Todo};
+use todo_kernel::model::todo::status::TodoStatus;
+use todo_kernel::model::todo::{NewTodo, Todo, UpdateTodo};
 
 #[derive(FromRow, Debug)]
 pub struct StoredTodo {
     pub id: String,
     pub title: String,
     pub description: String,
-    pub is_completed: bool,
+    pub status_id: String,
+    pub status_code: String,
+    pub status_name: String,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
-    pub completed_at: Option<DateTime<Utc>>,
 }
 
 impl TryFrom<StoredTodo> for Todo {
@@ -21,10 +25,9 @@ impl TryFrom<StoredTodo> for Todo {
             id: t.id.try_into()?,
             title: t.title,
             description: t.description,
-            is_completed: t.is_completed,
+            status: TodoStatus::new(t.status_id.try_into()?, t.status_code, t.status_name),
             created_at: t.created_at,
             updated_at: t.updated_at,
-            completed_at: t.completed_at,
         })
     }
 }
@@ -36,14 +39,36 @@ pub struct InsertTodo {
     pub description: String,
 }
 
-impl TryFrom<NewTodo> for InsertTodo {
-    type Error = anyhow::Error;
-
-    fn try_from(nt: NewTodo) -> Result<Self, Self::Error> {
-        Ok(InsertTodo {
+impl From<NewTodo> for InsertTodo {
+    fn from(nt: NewTodo) -> Self {
+        InsertTodo {
             id: nt.id.value.to_string(),
             title: nt.title,
             description: nt.description,
-        })
+        }
+    }
+}
+
+pub struct UpdateStoredTodo {
+    pub id: String,
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub status_id: Option<String>,
+}
+
+impl From<UpdateTodo> for UpdateStoredTodo {
+    fn from(ut: UpdateTodo) -> Self {
+        let status_id = if let Some(status) = ut.status {
+            Some(status.id.value.to_string())
+        } else {
+            None
+        };
+
+        UpdateStoredTodo {
+            id: ut.id.value.to_string(),
+            title: ut.title,
+            description: ut.description,
+            status_id,
+        }
     }
 }

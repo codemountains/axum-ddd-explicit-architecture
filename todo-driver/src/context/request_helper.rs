@@ -8,11 +8,11 @@ use validator::Validate;
 
 #[async_trait]
 impl<T, B> FromRequest<B> for ValidatedRequest<T>
-    where
-        T: DeserializeOwned + Validate,
-        B: http_body::Body + Send,
-        B::Data: Send,
-        B::Error: Into<BoxError>,
+where
+    T: DeserializeOwned + Validate,
+    B: http_body::Body + Send,
+    B::Data: Send,
+    B::Error: Into<BoxError>,
 {
     type Rejection = AppError;
 

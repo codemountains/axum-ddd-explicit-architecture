@@ -4,6 +4,7 @@ use ulid::Ulid;
 
 pub mod todo;
 
+#[derive(Debug)]
 pub struct Id<T> {
     pub value: Ulid,
     _marker: PhantomData<T>,
