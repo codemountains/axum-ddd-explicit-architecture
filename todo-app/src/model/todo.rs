@@ -69,15 +69,6 @@ impl UpdateTodoView {
     }
 }
 
-// impl TryFrom<UpdateTodoView> for UpdateTodo {
-//     type Error = anyhow::Error;
-//
-//     fn try_from(ut: UpdateTodoView) -> Result<Self, Self::Error> {
-//         Ok(UpdateTodo::new(
-//             ut.id.try_into()?,
-//             ut.title,
-//             ut.description,
-//             ut.status.try_into()?,
-//         ))
-//     }
-// }
+pub struct SearchTodoCondition {
+    pub status_code: Option<String>,
+}

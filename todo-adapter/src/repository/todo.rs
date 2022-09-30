@@ -4,6 +4,7 @@ use crate::model::todo::{InsertTodo, StoredTodo, UpdateStoredTodo};
 use crate::repository::DatabaseRepositoryImpl;
 use async_trait::async_trait;
 use sqlx::{query, query_as};
+use todo_kernel::model::todo::status::TodoStatus;
 use todo_kernel::model::todo::{NewTodo, Todo, UpdateTodo};
 use todo_kernel::model::Id;
 use todo_kernel::repository::todo::TodoRepository;
@@ -42,9 +43,15 @@ impl TodoRepository for DatabaseRepositoryImpl<Todo> {
         }
     }
 
-    async fn find(&self) -> anyhow::Result<Option<Vec<Todo>>> {
+    async fn find(&self, status: Option<TodoStatus>) -> anyhow::Result<Option<Vec<Todo>>> {
         let pool = self.db.0.clone();
-        let sql = r#"
+        let where_status = if let Some(s) = &status {
+            s.id.value.to_string()
+        } else {
+            "".to_string()
+        };
+
+        let mut sql = r#"
             select
                 t.id as id,
                 t.title as title,
@@ -59,8 +66,19 @@ impl TodoRepository for DatabaseRepositoryImpl<Todo> {
                 inner join
                     todo_statuses as ts
                     on ts.id = t.status_id
-        "#;
-        let stored_todo_list = query_as::<_, StoredTodo>(sql).fetch_all(&*pool).await.ok();
+            where t.status_id in ($1)
+        "#
+        .to_string();
+
+        if status.is_none() {
+            sql = sql.replace("$1", "select id from todo_statuses");
+        }
+
+        let stored_todo_list = query_as::<_, StoredTodo>(&sql)
+            .bind(where_status)
+            .fetch_all(&*pool)
+            .await
+            .ok();
 
         match stored_todo_list {
             Some(todo_list) => {
