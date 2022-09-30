@@ -52,3 +52,6 @@ Temporary Items
 # IntelliJ
 .idea
 *.iml
+
+# env file
+.env
