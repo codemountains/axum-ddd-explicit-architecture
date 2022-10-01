@@ -101,4 +101,17 @@ impl<R: RepositoriesModuleExt> TodoUseCase<R> {
 
         Ok(todo_view.into())
     }
+
+    pub async fn delete_todo(&self, id: String) -> anyhow::Result<Option<TodoView>> {
+        let resp = self
+            .repositories
+            .todo_repository()
+            .delete(&id.try_into()?)
+            .await?;
+
+        match resp {
+            Some(t) => Ok(Some(t.into())),
+            None => Ok(None),
+        }
+    }
 }
