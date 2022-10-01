@@ -51,3 +51,21 @@ impl UpdateTodo {
         }
     }
 }
+
+pub struct UpsertTodo {
+    pub id: Id<Todo>,
+    pub title: String,
+    pub description: String,
+    pub status: TodoStatus,
+}
+
+impl UpsertTodo {
+    pub fn new(id: Id<Todo>, title: String, description: String, status: TodoStatus) -> Self {
+        Self {
+            id,
+            title,
+            description,
+            status,
+        }
+    }
+}

@@ -69,6 +69,24 @@ impl UpdateTodoView {
     }
 }
 
+pub struct UpsertTodoView {
+    pub id: String,
+    pub title: String,
+    pub description: String,
+    pub status_code: String,
+}
+
+impl UpsertTodoView {
+    pub fn new(id: String, title: String, description: String, status_code: String) -> Self {
+        Self {
+            id,
+            title,
+            description,
+            status_code,
+        }
+    }
+}
+
 pub struct SearchTodoCondition {
     pub status_code: Option<String>,
 }

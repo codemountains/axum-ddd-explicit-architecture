@@ -1,4 +1,4 @@
--- Setup a table
+-- Setup tables
 create table todo_statuses (
     id varchar(26) not null primary key,
     code varchar(255) not null,
@@ -14,13 +14,14 @@ insert into todo_statuses (id, code, name) values ('01GE50CK0PADP4ZH7A7BFHDDH9',
 insert into todo_statuses (id, code, name) values ('01GE50F00G30E08VVZ0PR9QT63', 'deleted', '削除');
 
 create table todos (
-    id varchar(26) not null primary key,
+    id varchar(26) not null,
     title varchar(255) not null,
     description text not null,
     status_id varchar(26) not null default '01GE4ZQCSW8QHKSCA172Q5F358',
     created_at timestamp with time zone not null default current_timestamp,
     updated_at timestamp with time zone not null default current_timestamp,
-    constraint fk_todos_status_id foreign key (status_id) references todo_statuses (id)
+    constraint pk_todos_id primary key (id),
+    constraint fk_todos_status_id_todo_statuses_id foreign key (status_id) references todo_statuses (id)
 );
 
 -- Insert sample data
