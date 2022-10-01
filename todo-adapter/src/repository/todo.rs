@@ -67,6 +67,7 @@ impl TodoRepository for DatabaseRepositoryImpl<Todo> {
                     todo_statuses as ts
                     on ts.id = t.status_id
             where t.status_id in ($1)
+            order by t.created_at asc
         "#
         .to_string();
 
