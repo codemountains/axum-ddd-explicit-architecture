@@ -96,7 +96,7 @@ pub async fn update_todo(
             let resp = modules.todo_use_case().update_todo(todo).await;
 
             resp.map(|tv| {
-                info!("Updated todo: {}", tv.id);
+                info!("Updated todo {}", tv.id);
                 let json: JsonTodo = tv.into();
                 (StatusCode::OK, Json(json))
             })
@@ -121,6 +121,30 @@ pub async fn update_todo(
         Err(errors) => {
             let json = JsonErrorResponse::new("invalid_request".to_string(), errors);
             Err((StatusCode::BAD_REQUEST, Json(json)))
+        }
+    }
+}
+
+pub async fn delete_todo(
+    Path(id): Path<String>,
+    Extension(modules): Extension<Arc<Modules>>,
+) -> Result<impl IntoResponse, StatusCode> {
+    let resp = modules.todo_use_case().delete_todo(id).await;
+
+    match resp {
+        Ok(tv) => tv
+            .map(|tv| {
+                info!("Deleted todo `{}`.", tv.id);
+                let json: JsonTodo = tv.into();
+                (StatusCode::OK, Json(json))
+            })
+            .ok_or_else(|| {
+                error!("Todo is not found.");
+                StatusCode::NOT_FOUND
+            }),
+        Err(err) => {
+            error!("Unexpected error: {:?}", err);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
         }
     }
 }

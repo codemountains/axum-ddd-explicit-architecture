@@ -179,4 +179,49 @@ impl TodoRepository for DatabaseRepositoryImpl<Todo> {
             .await?;
         Ok(stored_todo.try_into()?)
     }
+
+    async fn delete(&self, id: &Id<Todo>) -> anyhow::Result<Option<Todo>> {
+        let pool = self.db.0.clone();
+
+        let sql = r#"
+            select
+                t.id as id,
+                t.title as title,
+                t.description as description,
+                ts.id as status_id,
+                ts.code as status_code,
+                ts.name as status_name,
+                t.created_at as created_at,
+                t.updated_at as updated_at
+            from
+                todos as t
+                inner join
+                    todo_statuses as ts
+                    on ts.id = t.status_id
+            where
+                t.id = $1
+        "#;
+
+        let stored_todo = query_as::<_, StoredTodo>(sql)
+            .bind(id.value.to_string())
+            .fetch_one(&*pool)
+            .await
+            .ok();
+
+        match stored_todo {
+            Some(st) => {
+                let delete_sql = r#"
+                    delete from todos where id = $1
+                "#;
+
+                let _ = query(delete_sql)
+                    .bind(id.value.to_string())
+                    .execute(&*pool)
+                    .await?;
+
+                Ok(Some(st.try_into()?))
+            }
+            None => Ok(None),
+        }
+    }
 }
