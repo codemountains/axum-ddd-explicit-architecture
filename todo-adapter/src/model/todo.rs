@@ -3,7 +3,7 @@ pub mod status;
 use chrono::{DateTime, Utc};
 use sqlx::FromRow;
 use todo_kernel::model::todo::status::TodoStatus;
-use todo_kernel::model::todo::{NewTodo, Todo, UpdateTodo};
+use todo_kernel::model::todo::{NewTodo, Todo, UpdateTodo, UpsertTodo};
 
 #[derive(FromRow, Debug)]
 pub struct StoredTodo {
@@ -69,6 +69,24 @@ impl From<UpdateTodo> for UpdateStoredTodo {
             title: ut.title,
             description: ut.description,
             status_id,
+        }
+    }
+}
+
+pub struct UpsertStoredTodo {
+    pub id: String,
+    pub title: String,
+    pub description: String,
+    pub status_id: String,
+}
+
+impl From<UpsertTodo> for UpsertStoredTodo {
+    fn from(ut: UpsertTodo) -> Self {
+        UpsertStoredTodo {
+            id: ut.id.value.to_string(),
+            title: ut.title,
+            description: ut.description,
+            status_id: ut.status.id.value.to_string(),
         }
     }
 }

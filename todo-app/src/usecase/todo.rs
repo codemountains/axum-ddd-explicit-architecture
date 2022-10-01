@@ -1,8 +1,10 @@
-use crate::model::todo::{CreateTodo, SearchTodoCondition, TodoView, UpdateTodoView};
+use crate::model::todo::{
+    CreateTodo, SearchTodoCondition, TodoView, UpdateTodoView, UpsertTodoView,
+};
 use anyhow::anyhow;
 use std::sync::Arc;
 use todo_adapter::modules::RepositoriesModuleExt;
-use todo_kernel::model::todo::UpdateTodo;
+use todo_kernel::model::todo::{UpdateTodo, UpsertTodo};
 use todo_kernel::repository::todo::status::TodoStatusRepository;
 use todo_kernel::repository::todo::TodoRepository;
 
@@ -97,6 +99,35 @@ impl<R: RepositoriesModuleExt> TodoUseCase<R> {
             .repositories
             .todo_repository()
             .update(update_todo)
+            .await?;
+
+        Ok(todo_view.into())
+    }
+
+    pub async fn upsert_todo(&self, source: UpsertTodoView) -> anyhow::Result<TodoView> {
+        let status = match self
+            .repositories
+            .todo_status_repository()
+            .get_by_code(&source.status_code)
+            .await
+        {
+            Ok(status) => status,
+            Err(err) => {
+                return Err(anyhow!(err));
+            }
+        };
+
+        let upsert_todo = UpsertTodo::new(
+            source.id.try_into()?,
+            source.title,
+            source.description,
+            status,
+        );
+
+        let todo_view = self
+            .repositories
+            .todo_repository()
+            .upsert(upsert_todo)
             .await?;
 
         Ok(todo_view.into())

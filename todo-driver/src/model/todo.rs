@@ -2,7 +2,9 @@ pub mod status;
 
 use crate::model::todo::status::JsonTodoStatus;
 use serde::{Deserialize, Serialize};
-use todo_app::model::todo::{CreateTodo, SearchTodoCondition, TodoView, UpdateTodoView};
+use todo_app::model::todo::{
+    CreateTodo, SearchTodoCondition, TodoView, UpdateTodoView, UpsertTodoView,
+};
 use validator::Validate;
 
 #[derive(Debug, Serialize)]
@@ -64,13 +66,13 @@ impl From<JsonCreateTodo> for CreateTodo {
 
 #[derive(Deserialize, Debug, Validate)]
 #[serde(rename_all = "camelCase")]
-pub struct JsonUpdateTodo {
+pub struct JsonUpdateTodoContents {
     pub title: Option<String>,
     pub description: Option<String>,
     pub status_code: Option<String>,
 }
 
-impl JsonUpdateTodo {
+impl JsonUpdateTodoContents {
     pub fn validate(self, id: String) -> Result<UpdateTodoView, Vec<String>> {
         let mut errors: Vec<String> = vec![];
 
@@ -96,6 +98,34 @@ impl JsonUpdateTodo {
             self.description,
             self.status_code,
         ))
+    }
+}
+
+#[derive(Deserialize, Debug, Validate)]
+#[serde(rename_all = "camelCase")]
+pub struct JsonUpsertTodoContents {
+    #[validate(
+        length(min = 1, message = "`title` is empty."),
+        required(message = "`title` is null.")
+    )]
+    pub title: Option<String>,
+    #[validate(required(message = "`description` is null."))]
+    pub description: Option<String>,
+    #[validate(
+        length(min = 1, message = "`statusCode` is empty."),
+        required(message = "`statusCode` is null.")
+    )]
+    pub status_code: Option<String>,
+}
+
+impl JsonUpsertTodoContents {
+    pub fn to_view(self, id: String) -> UpsertTodoView {
+        UpsertTodoView::new(
+            id,
+            self.title.unwrap(),
+            self.description.unwrap(),
+            self.status_code.unwrap(),
+        )
     }
 }
 
