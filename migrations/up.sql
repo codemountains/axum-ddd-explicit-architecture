@@ -1,8 +1,9 @@
 -- Setup tables
 create table todo_statuses (
-    id varchar(26) not null primary key,
+    id varchar(26) not null,
     code varchar(255) not null,
-    name varchar(255) not null
+    name varchar(255) not null,
+    constraint pk_todo_statuses_id primary key (id)
 );
 
 insert into todo_statuses (id, code, name) values ('01GE4ZQCSW8QHKSCA172Q5F358', 'new', '新規');
