@@ -55,3 +55,6 @@ Temporary Items
 
 # env file
 .env
+
+# Database
+/database/pg-data

@@ -4,28 +4,75 @@ An example of web application by using Rust and Axum with Clean Architecture (Ex
 
 ## Getting Started
 
-### Setting up database tables
-
-Please `createdb` and run SQLs in migrations directory.
-
-`up.sql` can be up tables, `down.sql` removes them.
+### Setting up database
 
 ```shell
-createdb todo_db -O <owner_user>
+docker-compose up --build -d
 ```
+
+or
+
+```shell
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+- `--no-cache`: Do not use cache when building the image.
+- `-d`: Detached mode: Run containers in the background, print new container names.
 
 ### Run the web application
 
+Execute a command in the running `app` container and `cargo run` in the `app` container.
+
+```shell
+docker-compose exec app bash
+```
+
 ```shell
 cargo run
+```
+
+### Notes
+
+[docker-compose](https://docs.docker.jp/compose/reference/docker-compose.html)
+
+#### Start, Stop, Restart
+
+```shell
+docker-compose start
+```
+
+```shell
+docker-compose stop
+```
+
+```shell
+docker-compose restart
+```
+
+#### Down
+
+```shell
+docker-compose down -v
+```
+
+- `-v`: Remove named volumes declared in the `volumes` section of the Compose file and anonymous volumes attached to containers.
+
+#### Exec
+
+Execute a command in a running container.
+
+```shell
+docker-compose exec app bash
+docker-compose exec db bash
 ```
 
 ## Development
 
 ### Dependencies
 
-- Axum
-- PostgreSQL 14
+- Axum 0.5.13
+- Postgresql 14
 
 ### Architecture
 

@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+    app:
+        container_name: app
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: "development"
+        ports:
+            -   "8080:8080"
+        depends_on:
+            -   db
+        volumes:
+            -   ./todo-adapter:/app/todo-adapter
+            -   ./todo-app:/app/todo-app
+            -   ./todo-driver:/app/todo-driver
+            -   ./todo-kernel:/app/todo-kernel
+        stdin_open: true
+        tty: true
+    db:
+        container_name: postgres
+        build:
+            context: ./database
+            dockerfile: Dockerfile
+            target: "database"
+        ports:
+            -   "5432:5432"
+        volumes:
+            -   ./database/pg-data:/var/lib/postgresql/data
+            -   ./migrations/up.sql:/docker-entrypoint-initdb.d/up.sql
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: todo_db
+        restart: always
+volumes:
+    pg-data:
