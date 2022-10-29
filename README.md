@@ -32,6 +32,18 @@ docker-compose exec app bash
 cargo run
 ```
 
+### Run the web application (in local)
+
+Create `.env` and `cargo run`.
+
+```shell
+cp local.env .env
+```
+
+```shell
+cargo run
+```
+
 ### Notes
 
 [docker-compose](https://docs.docker.jp/compose/reference/docker-compose.html)
