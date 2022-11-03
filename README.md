@@ -6,6 +6,8 @@ An example of web application by using Rust and Axum with Clean Architecture (Ex
 
 ### Setting up database
 
+#### Run Postgresql on Docker
+
 ```shell
 docker-compose up --build -d
 ```
@@ -19,6 +21,18 @@ docker-compose up -d
 
 - `--no-cache`: Do not use cache when building the image.
 - `-d`: Detached mode: Run containers in the background, print new container names.
+
+#### Create database and migration in the app container
+
+```shell
+docker-compose exec app bash
+```
+and
+
+```shell
+sqlx database create
+sqlx migrate run
+```
 
 ### Run the web application
 
