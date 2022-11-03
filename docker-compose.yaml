@@ -10,14 +10,20 @@ services:
         ports:
             -   "8080:8080"
         depends_on:
-            -   db
+            db:
+                condition: service_healthy
         volumes:
             -   ./todo-adapter:/app/todo-adapter
             -   ./todo-app:/app/todo-app
             -   ./todo-driver:/app/todo-driver
             -   ./todo-kernel:/app/todo-kernel
+            -   ./migrations:/app/migrations
+            -   ./Cargo.toml:/app/Cargo.toml
+            -   ./docker-app.env:/app/.env
         stdin_open: true
         tty: true
+#        command:
+#            -   bash -c "sqlx database create"
     db:
         container_name: postgres
         build:
@@ -28,11 +34,16 @@ services:
             -   "5432:5432"
         volumes:
             -   ./database/pg-data:/var/lib/postgresql/data
-            -   ./migrations/up.sql:/docker-entrypoint-initdb.d/up.sql
         environment:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: postgres
-            POSTGRES_DB: todo_db
+            POSTGRES_DB: postgres
         restart: always
+        healthcheck:
+            test: pg_isready -U postgres
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 10s
 volumes:
     pg-data:
