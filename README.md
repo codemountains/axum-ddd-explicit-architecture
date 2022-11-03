@@ -34,6 +34,12 @@ sqlx database create
 sqlx migrate run
 ```
 
+#### Drop database
+
+```shell
+sqlx database drop
+```
+
 ### Run the web application
 
 Execute a command in the running `app` container and `cargo run` in the `app` container.
