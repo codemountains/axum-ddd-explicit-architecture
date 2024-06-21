@@ -5,16 +5,16 @@ use crate::model::todo::{
     TodoQuery,
 };
 use crate::module::{Modules, ModulesExt};
-use axum::extract::{Path, Query};
+use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use axum::{Extension, Json};
+use axum::Json;
 use std::sync::Arc;
 use tracing::log::{error, info};
 
 pub async fn get_todo(
     Path(id): Path<String>,
-    Extension(modules): Extension<Arc<Modules>>,
+    modules: State<Arc<Modules>>,
 ) -> Result<impl IntoResponse, StatusCode> {
     let resp = modules.todo_use_case().get_todo(id).await;
 
@@ -38,7 +38,7 @@ pub async fn get_todo(
 
 pub async fn find_todo(
     Query(query): Query<TodoQuery>,
-    Extension(modules): Extension<Arc<Modules>>,
+    modules: State<Arc<Modules>>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
     let resp = modules.todo_use_case().find_todo(query.into()).await;
 
@@ -73,8 +73,8 @@ pub async fn find_todo(
 }
 
 pub async fn create_todo(
+    modules: State<Arc<Modules>>,
     ValidatedRequest(source): ValidatedRequest<JsonCreateTodo>,
-    Extension(modules): Extension<Arc<Modules>>,
 ) -> Result<impl IntoResponse, StatusCode> {
     let resp = modules.todo_use_case().register_todo(source.into()).await;
 
@@ -91,8 +91,8 @@ pub async fn create_todo(
 
 pub async fn update_todo(
     Path(id): Path<String>,
+    modules: State<Arc<Modules>>,
     ValidatedRequest(source): ValidatedRequest<JsonUpdateTodoContents>,
-    Extension(modules): Extension<Arc<Modules>>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
     match source.validate(id) {
         Ok(todo) => {
@@ -130,8 +130,8 @@ pub async fn update_todo(
 
 pub async fn upsert_todo(
     Path(id): Path<String>,
+    modules: State<Arc<Modules>>,
     ValidatedRequest(source): ValidatedRequest<JsonUpsertTodoContents>,
-    Extension(modules): Extension<Arc<Modules>>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
     let resp = modules
         .todo_use_case()
@@ -161,7 +161,7 @@ pub async fn upsert_todo(
 
 pub async fn delete_todo(
     Path(id): Path<String>,
-    Extension(modules): Extension<Arc<Modules>>,
+    modules: State<Arc<Modules>>,
 ) -> Result<impl IntoResponse, StatusCode> {
     let resp = modules.todo_use_case().delete_todo(id).await;
 
