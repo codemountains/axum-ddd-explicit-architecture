@@ -103,8 +103,8 @@ docker-compose exec db bash
 
 ### Dependencies
 
-- Axum 0.5.13
-- Postgresql 14
+- Axum 0.7.5
+- Postgresql 16
 
 ### Architecture
 
