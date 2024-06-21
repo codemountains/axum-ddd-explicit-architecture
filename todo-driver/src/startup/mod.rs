@@ -4,11 +4,12 @@ use crate::routes::todo::{
     create_todo, delete_todo, find_todo, get_todo, update_todo, upsert_todo,
 };
 use axum::routing::get;
-use axum::{Extension, Router};
+use axum::Router;
 use dotenv::dotenv;
 use std::env;
 use std::net::{IpAddr, SocketAddr};
 use std::sync::Arc;
+use tokio::net::TcpListener;
 
 pub async fn startup(modules: Arc<Modules>) {
     let hc_router = Router::new()
@@ -28,13 +29,15 @@ pub async fn startup(modules: Arc<Modules>) {
     let app = Router::new()
         .nest("/v1/hc", hc_router)
         .nest("/v1/todos", todo_router)
-        .layer(Extension(modules));
+        .with_state(modules);
 
     let addr = SocketAddr::from(init_addr());
+    let listener = TcpListener::bind(addr)
+        .await
+        .unwrap_or_else(|_| panic!("TcpListener cannot bind."));
     tracing::info!("Server listening on {}", addr);
 
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
+    axum::serve(listener, app)
         .await
         .unwrap_or_else(|_| panic!("Server cannot launch."));
 }
