@@ -5,3 +5,4 @@ members = [
     "todo-driver",
     "todo-kernel",
 ]
+resolver = "2"
