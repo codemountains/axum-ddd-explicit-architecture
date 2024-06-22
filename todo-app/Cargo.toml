@@ -10,4 +10,4 @@ todo-kernel = { path = "../todo-kernel" }
 todo-adapter = { path = "../todo-adapter" }
 anyhow = "1.0.58"
 chrono = "0.4.22"
-tokio = { version = "1.20.0", features = ["full"] }
+tokio = { version = "1.38.0", features = ["full"] }
