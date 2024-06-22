@@ -9,5 +9,5 @@ edition = "2021"
 todo-kernel = { path = "../todo-kernel" }
 todo-adapter = { path = "../todo-adapter" }
 anyhow = "1.0.86"
-chrono = "0.4.22"
+chrono = "0.4.38"
 tokio = { version = "1.38.0", features = ["full"] }

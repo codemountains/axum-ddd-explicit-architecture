@@ -8,6 +8,6 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.86"
 async-trait = "0.1.56"
-chrono = "0.4.22"
+chrono = "0.4.38"
 serde = { version = "1.0.203", features = ["derive"] }
 ulid = "1.1.2"

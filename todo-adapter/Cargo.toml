@@ -9,7 +9,7 @@ edition = "2021"
 todo-kernel = { path = "../todo-kernel" }
 anyhow = "1.0.86"
 async-trait = "0.1.56"
-chrono = "0.4.22"
+chrono = "0.4.38"
 dotenv = "0.15.0"
 serde = { version = "1.0.203", features = ["derive"] }
 sqlx = { version = "0.7.4", features = ["runtime-tokio-rustls", "postgres", "chrono"] }
