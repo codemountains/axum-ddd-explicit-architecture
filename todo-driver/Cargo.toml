@@ -19,5 +19,5 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 tokio = { version = "1.38.0", features = ["full"] }
 tower = "0.4.13"
 tower-http = { version = "0.5.2", features = ["cors"] }
-thiserror = "1.0.35"
+thiserror = "1.0.61"
 validator = { version = "0.18.1", features = ["derive"] }
