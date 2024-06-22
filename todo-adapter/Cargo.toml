@@ -11,6 +11,6 @@ anyhow = "1.0.86"
 async-trait = "0.1.56"
 chrono = "0.4.22"
 dotenv = "0.15.0"
-serde = { version = "1.0.140", features = ["derive"] }
+serde = { version = "1.0.203", features = ["derive"] }
 sqlx = { version = "0.7.4", features = ["runtime-tokio-rustls", "postgres", "chrono"] }
 tokio = { version = "1.38.0", features = ["full"] }
