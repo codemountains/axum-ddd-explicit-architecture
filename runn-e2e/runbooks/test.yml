@@ -1,0 +1,112 @@
+desc: "Todo API test"
+runners:
+  req:
+    endpoint: http://127.0.0.1:8080/v1
+vars:
+  title: "My first todo!!!"
+  description: "This is a todo for test."
+steps:
+  hc:
+    desc: "Health Check"
+    req:
+      /hc:
+        get:
+          body:
+            application/json: null
+    test: |
+      // Status code must be 204.
+      current.res.status == 204
+  hcPostgres:
+    desc: "Health Check Postgres"
+    req:
+      /hc/postgres:
+        get:
+          body:
+            application/json: null
+    test: |
+      // Status code must be 204.
+      current.res.status == 204
+  postTodo:
+    desc: "Create Todo"
+    req:
+      /todos:
+        post:
+          body:
+            application/json:
+              title: "{{ vars.title }}"
+              description: "{{ vars.description }}"
+    test: |
+      // Status code must be 201.
+      current.res.status == 201
+    bind:
+      todoId: current.res.body.id
+  getTodo:
+    desc: "Get Todo"
+    req:
+      /todos/{{ todoId }}:
+        get:
+          body:
+            application/json: null
+    test: |
+      // Status code must be 200.
+      current.res.status == 200
+      && current.res.body.id == todoId
+  findTodo:
+    desc: "Find Todo"
+    req:
+      /todos:
+        get:
+          body:
+            application/json: null
+    test: |
+      // Status code must be 200.
+      current.res.status == 200
+      && len(current.res.body.todos) > 0
+  findNewTodo:
+    desc: "Find New Todo"
+    req:
+      /todos?status=new:
+        get:
+          body:
+            application/json: null
+    test: |
+      // Status code must be 200.
+      current.res.status == 200
+      && len(current.res.body.todos) > 0
+  putTodo:
+    desc: "Update Todo"
+    req:
+      /todos/{{ todoId }}:
+        put:
+          body:
+            application/json:
+              title: "{{ vars.title }}"
+              description: "{{ vars.description }}"
+              statusCode: "working"
+    test: |
+      // Status code must be 200.
+      current.res.status == 200
+      && current.res.body.status.code == "working"
+  patchTodo:
+    desc: "Change Todo Stats"
+    req:
+      /todos/{{ todoId }}:
+        patch:
+          body:
+            application/json:
+              statusCode: "done"
+    test: |
+      // Status code must be 200.
+      current.res.status == 200
+      && current.res.body.status.code == "done"
+  deleteTodo:
+    desc: "Delete Todo"
+    req:
+      /todos/{{ todoId }}:
+        delete:
+          body:
+            application/json: null
+    test: |
+      // Status code must be 200.
+      current.res.status == 200
+      && current.res.body.id == todoId
