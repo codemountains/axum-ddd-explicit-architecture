@@ -27,8 +27,8 @@ pub async fn startup(modules: Arc<Modules>) {
         );
 
     let app = Router::new()
-        .nest("/v1/hc", hc_router)
-        .nest("/v1/todos", todo_router)
+        .nest("/:v/hc", hc_router)
+        .nest("/:v/todos", todo_router)
         .with_state(modules);
 
     let addr = SocketAddr::from(init_addr());
