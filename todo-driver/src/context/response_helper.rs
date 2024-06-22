@@ -54,6 +54,31 @@ impl IntoResponse for AppError {
                     )),
                 )
             }
+            AppError::ApiPathRejection(rejection) => {
+                error!("{:?}", rejection);
+
+                let messages = vec![rejection.to_string()];
+                (
+                    StatusCode::BAD_REQUEST,
+                    Json(JsonErrorResponse::new(
+                        "missing_api_version".to_string(),
+                        messages,
+                    )),
+                )
+            }
+            AppError::UnknownApiVerRejection(version) => {
+                let err = format!("Unknown api version ({}).", version);
+                error!("{}", err);
+
+                let messages = vec![err];
+                (
+                    StatusCode::NOT_FOUND,
+                    Json(JsonErrorResponse::new(
+                        "unknown_api_version".to_string(),
+                        messages,
+                    )),
+                )
+            }
         }
         .into_response()
     }

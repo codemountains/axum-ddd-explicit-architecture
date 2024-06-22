@@ -1,3 +1,4 @@
+use crate::context::api_version::ApiVersion;
 use crate::context::response_helper::JsonErrorResponse;
 use crate::context::validate::ValidatedRequest;
 use crate::model::todo::{
@@ -13,7 +14,8 @@ use std::sync::Arc;
 use tracing::log::{error, info};
 
 pub async fn get_todo(
-    Path(id): Path<String>,
+    _: ApiVersion,
+    Path((_v, id)): Path<(ApiVersion, String)>,
     modules: State<Arc<Modules>>,
 ) -> Result<impl IntoResponse, StatusCode> {
     let resp = modules.todo_use_case().get_todo(id).await;
@@ -37,6 +39,7 @@ pub async fn get_todo(
 }
 
 pub async fn find_todo(
+    _: ApiVersion,
     Query(query): Query<TodoQuery>,
     modules: State<Arc<Modules>>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
@@ -73,6 +76,7 @@ pub async fn find_todo(
 }
 
 pub async fn create_todo(
+    _: ApiVersion,
     modules: State<Arc<Modules>>,
     ValidatedRequest(source): ValidatedRequest<JsonCreateTodo>,
 ) -> Result<impl IntoResponse, StatusCode> {
@@ -90,7 +94,8 @@ pub async fn create_todo(
 }
 
 pub async fn update_todo(
-    Path(id): Path<String>,
+    _: ApiVersion,
+    Path((_v, id)): Path<(ApiVersion, String)>,
     modules: State<Arc<Modules>>,
     ValidatedRequest(source): ValidatedRequest<JsonUpdateTodoContents>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
@@ -129,7 +134,8 @@ pub async fn update_todo(
 }
 
 pub async fn upsert_todo(
-    Path(id): Path<String>,
+    _: ApiVersion,
+    Path((_v, id)): Path<(ApiVersion, String)>,
     modules: State<Arc<Modules>>,
     ValidatedRequest(source): ValidatedRequest<JsonUpsertTodoContents>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
@@ -160,7 +166,8 @@ pub async fn upsert_todo(
 }
 
 pub async fn delete_todo(
-    Path(id): Path<String>,
+    _: ApiVersion,
+    Path((_v, id)): Path<(ApiVersion, String)>,
     modules: State<Arc<Modules>>,
 ) -> Result<impl IntoResponse, StatusCode> {
     let resp = modules.todo_use_case().delete_todo(id).await;
