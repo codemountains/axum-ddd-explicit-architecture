@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 todo-kernel = { path = "../todo-kernel" }
-anyhow = "1.0.58"
+anyhow = "1.0.86"
 async-trait = "0.1.56"
 chrono = "0.4.22"
 dotenv = "0.15.0"

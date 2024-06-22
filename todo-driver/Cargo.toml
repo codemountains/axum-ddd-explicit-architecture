@@ -9,7 +9,7 @@ edition = "2021"
 todo-kernel = { path = "../todo-kernel" }
 todo-app = { path = "../todo-app" }
 todo-adapter = { path = "../todo-adapter" }
-anyhow = "1.0.58"
+anyhow = "1.0.86"
 axum = "0.7.5"
 dotenv = "0.15.0"
 http-body = "1.0.0"
