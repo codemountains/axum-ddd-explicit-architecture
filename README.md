@@ -137,7 +137,10 @@ The adapter layer has around infrastructure's concerns.
 This layer can connect and access outside middlewares, services or APIs.
 The access and connection processes have to be bounded in this layer.
 
-See more [Explicit Architecture](https://herbertograca.com/tag/explicit-architecture/).
+See more: 
+
+- [Rust の新しい HTTP サーバーのクレート Axum をフルに活用してサーバーサイドアプリケーション開発をしてみる - Don't Repeat Yourself](https://blog-dry.com/entry/2021/12/26/002649)
+- [Explicit Architecture](https://herbertograca.com/tag/explicit-architecture/).
 
 ## License
 
