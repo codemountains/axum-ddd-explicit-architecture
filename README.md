@@ -139,8 +139,11 @@ The access and connection processes have to be bounded in this layer.
 
 See more: 
 
-- [Rust の新しい HTTP サーバーのクレート Axum をフルに活用してサーバーサイドアプリケーション開発をしてみる - Don't Repeat Yourself](https://blog-dry.com/entry/2021/12/26/002649)
 - [explicit architecture – @hgraca](https://herbertograca.com/tag/explicit-architecture/)
+
+### References
+
+- [Rust の新しい HTTP サーバーのクレート Axum をフルに活用してサーバーサイドアプリケーション開発をしてみる - Don't Repeat Yourself](https://blog-dry.com/entry/2021/12/26/002649)
 
 ## License
 
