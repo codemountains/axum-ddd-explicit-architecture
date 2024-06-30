@@ -44,3 +44,17 @@ impl Modules {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::startup::init_app;
+
+    #[tokio::test]
+    async fn test_modules_new() {
+        init_app();
+
+        let _ = Modules::new().await;
+        assert!(true);
+    }
+}
