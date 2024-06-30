@@ -65,3 +65,25 @@ fn init_addr() -> (IpAddr, u16) {
     tracing::debug!("Init ip address.");
     (ip_addr, port)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::startup::init_app;
+
+    #[test]
+    fn test_init_app() {
+        init_app();
+
+        let _ = env::var("DATABASE_URL").unwrap_or_else(|_| panic!("DATABASE_URL must be set!"));
+        assert!(true);
+    }
+
+    #[test]
+    fn test_init_addr() {
+        init_app();
+
+        let _ = init_addr();
+        assert!(true);
+    }
+}
